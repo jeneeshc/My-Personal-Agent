@@ -16,10 +16,10 @@ async def verify_webhook(request: Request):
     Conforms to specs/api/whatsapp_webhook.yaml GET /webhook/whatsapp
     """
     import os
-    expected_token = os.environ.get("WHATSAPP_VERIFY_TOKEN", "my_secure_webhook_token")
+    expected_token = os.environ.get("WHATSAPP_VERIFY_TOKEN", "my_secure_webhook_token").strip()
     mode = request.query_params.get("hub.mode") or request.query_params.get("hub_mode")
     challenge = request.query_params.get("hub.challenge") or request.query_params.get("hub_challenge")
-    token = request.query_params.get("hub.verify_token") or request.query_params.get("hub_verify_token")
+    token = (request.query_params.get("hub.verify_token") or request.query_params.get("hub_verify_token") or "").strip()
     
     if mode == "subscribe" and token == expected_token:
         return Response(content=challenge or "", media_type="text/plain")
