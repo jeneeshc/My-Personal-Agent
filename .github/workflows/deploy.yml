@@ -32,7 +32,9 @@ jobs:
 
       - name: Run PyTest
         run: |
-          pytest tests/
+          python -m pytest tests/
+        env:
+          PYTHONPATH: .
 
   deploy:
     name: Build & Deploy to Cloud Run

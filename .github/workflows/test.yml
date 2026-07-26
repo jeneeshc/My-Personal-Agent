@@ -26,3 +26,5 @@ jobs:
       - name: Run Automated Pytest Suite
         run: |
           python -m pytest tests/ --verbose
+        env:
+          PYTHONPATH: .
