@@ -34,7 +34,7 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-      - '--set-env-vars=WHATSAPP_PHONE_NUMBER_ID=1094575157063755'
+      - '--set-env-vars=WHATSAPP_PHONE_NUMBER_ID=1094575157063755,ALLOWED_SENDER_ID=9003137412'
       - '--set-secrets=WHATSAPP_ACCESS_TOKEN=WHATSAPP_ACCESS_TOKEN:latest,WHATSAPP_VERIFY_TOKEN=WHATSAPP_VERIFY_TOKEN:latest'
 
 images:

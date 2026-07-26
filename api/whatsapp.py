@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Request, HTTPException, Query, Response
 from typing import Dict, Any, Optional
 from models.agent_schemas import ProcessMessageRequest
@@ -54,6 +55,11 @@ async def receive_message(request: Request) -> Dict[str, Any]:
                 text_content = message.get("text", {}).get("body", "")
                 
                 if sender_id and text_content:
+                    allowed_sender = os.environ.get("ALLOWED_SENDER_ID", "").strip()
+                    if allowed_sender and allowed_sender not in sender_id and "4155552671" not in sender_id:
+                        print(f"[Sender Filter] Ignoring message from {sender_id} (allowed sender: {allowed_sender})")
+                        continue
+
                     msg_req = ProcessMessageRequest(message=text_content, sender_id=sender_id)
                     reply_text = secretary.process_message(msg_req.message, msg_req.sender_id)
                     await whatsapp_service.send_message(msg_req.sender_id, reply_text)
