@@ -55,14 +55,20 @@ This document outlines the technical solution and production deployment strategy
 - **Dockerfile**: Multi-stage lightweight Python container built with `uvicorn` as ASGI server.
 - Port binding: Reads dynamic `$PORT` environment variable injected by GCP Cloud Run (default `8080`).
 
-### 3.2 Deployment Command (GCloud CLI)
+### 3.2 Native GCP Cloud Build Deployment Pipeline (`cloudbuild.yaml`)
+- **Authoritative Pipeline**: Production builds and deployments use **Google Cloud Build** directly via `cloudbuild.yaml`.
+- **GCP Cloud Build Trigger**: Triggered automatically on commit pushes to `main` branch or manually via `gcloud builds submit`.
+- **Zero-Secret IAM Security**: Cloud Build leverages native GCP IAM service accounts without needing external GitHub credentials or secret keys.
+
+#### Cloud Build Command:
 ```bash
-gcloud run deploy personal-agent \
-  --source . \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --set-secrets="WHATSAPP_ACCESS_TOKEN=whatsapp-token:latest,WHATSAPP_VERIFY_TOKEN=whatsapp-verify-token:latest"
+gcloud builds submit --config=cloudbuild.yaml --substitutions=COMMIT_SHA=$(git rev-parse --short HEAD) .
 ```
+
+#### Automated Deployment Steps in `cloudbuild.yaml`:
+1. Build Docker container image tagged with `$COMMIT_SHA` and `latest`.
+2. Push container images to GCP Artifact Registry (`us-central1-docker.pkg.dev/$PROJECT_ID/personal-agent/app`).
+3. Deploy container image to Google Cloud Run (`personal-agent`) in `us-central1` with secrets mounted from Secret Manager (`WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_VERIFY_TOKEN`).
 
 ---
 

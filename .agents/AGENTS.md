@@ -37,3 +37,11 @@ Whenever adding a feature, modifying an API, or introducing a new agent capabili
 ### 5. Living Documentation Standard
 - Keep `docs/Business_Requirement_Document.md` and `docs/Solution_Design_Document.md` aligned with architectural changes.
 - Never write ad-hoc, untyped dictionaries for inter-agent or API payloads. Always use validated contract models.
+
+### 6. Deployment Pipeline Standard (GCP Cloud Build)
+- Production builds and Cloud Run deployments are driven natively via **GCP Cloud Build** (`cloudbuild.yaml`).
+- All build configurations, secret injections (`WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_VERIFY_TOKEN`), and Artifact Registry image tags are specified in `cloudbuild.yaml`.
+- Direct GCP builds can be triggered via GCP Cloud Build Triggers on `main` or executed manually via:
+  ```bash
+  gcloud builds submit --config=cloudbuild.yaml --substitutions=COMMIT_SHA=$(git rev-parse --short HEAD) .
+  ```
