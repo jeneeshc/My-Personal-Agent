@@ -7,7 +7,7 @@ from typing import Optional
 
 class WhatsAppService:
     def __init__(self):
-        self.api_url = os.environ.get("WHATSAPP_API_URL", "https://graph.facebook.com/v17.0/").strip()
+        self.api_url = os.environ.get("WHATSAPP_API_URL", "https://graph.facebook.com/v20.0/").strip()
         self.phone_number_id = os.environ.get("WHATSAPP_PHONE_NUMBER_ID", "test_id").strip()
         self.access_token = os.environ.get("WHATSAPP_ACCESS_TOKEN", "test_token").strip()
         
