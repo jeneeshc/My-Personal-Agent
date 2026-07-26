@@ -42,6 +42,12 @@ async def receive_message(request: Request) -> Dict[str, Any]:
         value = changes.get("value", {})
         
         if "messages" in value:
+            # Filter events by target phone_number_id to route strictly to the correct agent
+            target_phone_id = value.get("metadata", {}).get("phone_number_id")
+            if target_phone_id and target_phone_id != whatsapp_service.phone_number_id:
+                print(f"[Webhook Filter] Ignoring payload for phone_id {target_phone_id} (this agent is {whatsapp_service.phone_number_id})")
+                return {"status": "ignored"}
+
             messages = value.get("messages", [])
             for message in messages:
                 sender_id = message.get("from")
