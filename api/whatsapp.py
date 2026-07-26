@@ -34,6 +34,7 @@ async def receive_message(request: Request) -> Dict[str, Any]:
     Conforms to specs/api/whatsapp_webhook.yaml POST /webhook/whatsapp
     """
     payload = await request.json()
+    print(f"[Incoming Webhook Payload]: {payload}")
     
     try:
         entry = payload.get("entry", [])[0]
