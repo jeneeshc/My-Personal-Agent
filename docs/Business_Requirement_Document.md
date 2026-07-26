@@ -13,13 +13,21 @@ This document outlines the business requirements for developing a Multi-Agent Pe
 ### 3.1 Core Agents
 - **Secretary Agent (Supervisor):** Acts as the central orchestrator. Interprets user messages on WhatsApp, maintains context, delegates sub-tasks to worker agents, and synthesizes their responses into a coherent reply to the user. This agent executes scheduled actions (e.g., weekly news summaries, daily email summaries) at user-defined frequencies. Additionally, it handles ad-hoc user queries at any time by processing the request and invoking the appropriate worker agent to formulate an answer.
 - **Task, Travel, and Calendar Manager:** Integrates with Google Calendar and Tasks. Manages scheduling, sets reminders, and coordinates travel itineraries.
+  - *Capabilities:* `get_calendar_events`, `schedule_event`, `suggest_itinerary`, `search_flights`.
 - **News, Updates, and Information Collector:** Gathers customized news feeds, tracks specific topics of interest, and provides daily summaries.
+  - *Capabilities:* `get_regional_news`, `get_tech_news`, `get_top_news`, `search_topic`, `get_weather`.
 - **Email Reading and Summarizing Agent:** Connects to Gmail. Reads, categorizes, and summarizes important emails, filtering out spam or low-priority messages.
+  - *Capabilities:* `fetch_unread_emails`, `summarize_thread`, `draft_reply`.
 - **Business Updates & Stock Performance Agent:** Tracks market trends, portfolio performance, and relevant business news.
+  - *Capabilities:* `get_stock_price`, `get_company_news`.
 - **Money Manager Agent:** Reads text messages and emails (via Gmail) to filter receipts and payment details. Uses this data to track expenses, monitor subscriptions, and provide financial health checks.
+  - *Capabilities:* `extract_receipt`, `calculate_spending`, `list_subscriptions`.
 - **Health & Wellness Agent:** Tracks fitness goals, integrates with Google Fit/Apple Health, and suggests healthy habits or meal plans.
+  - *Capabilities:* `log_workout`, `suggest_meal_plan`.
 - **E-commerce & Shopping Assistant:** Tracks price drops for wish-listed items, manages grocery lists, and automates routine purchases.
+  - *Capabilities:* `manage_grocery_list`, `check_product_price`.
 - **Document & Knowledge Manager:** Integrates with Google Drive to quickly retrieve files, summarize documents, and organize personal records.
+  - *Capabilities:* `search_drive`, `summarize_document`.
 
 ## 4. User Journey and Onboarding
 - **Registration:** User initiates interaction via a specific WhatsApp number.
@@ -38,6 +46,8 @@ This document outlines the business requirements for developing a Multi-Agent Pe
 - **PII Redaction:** Sensitive personal information (e.g., full account numbers) should be masked in logs and agent memories where possible.
 - **Audit Logging:** Maintain logs of what data each agent accessed and when.
 - **Revocation of Access:** Users must be able to instantly revoke Google permissions and delete their data via a simple WhatsApp command (e.g., "/delete-my-data").
+- **Agent Process Fault Tolerance:** Worker agent processes must auto-recover from transient errors up to 5 consecutive crashes. If an agent process fails to restart after 5 consecutive crashes, the supervisor must quarantine the worker process, prevent crash loops, and return a clean failure response.
+
 
 ## 7. Development & Quality Assurance Principles
 - **Living Documentation:** All documentation must be continuously updated as each feature is developed to ensure the context remains current and accurate.

@@ -1,0 +1,37 @@
+openapi: 3.1.0
+info:
+  title: Internal Cloud Scheduler Cron API Contract
+  description: OpenAPI contract for internal periodic HTTP endpoints triggered by GCP Cloud Scheduler.
+  version: 1.0.0
+paths:
+  /internal/cron/scheduled-tasks:
+    post:
+      summary: Execute Scheduled Tasks Batch
+      description: Endpoint triggered periodically by Cloud Scheduler to process scheduled summaries and updates.
+      parameters:
+        - name: X-CloudScheduler-JobName
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Batch processing executed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - processed_count
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  processed_count:
+                    type: integer
+                    example: 5
+                  details:
+                    type: array
+                    items:
+                      type: string

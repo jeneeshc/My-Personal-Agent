@@ -1,0 +1,192 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+title: WorkerAgentToolsContract
+description: Contract specifications for worker agent tools and capabilities across the 8 specialized domain agents.
+type: object
+definitions:
+  ScheduleEventRequest:
+    type: object
+    required:
+      - title
+      - start_time
+      - end_time
+    properties:
+      title:
+        type: string
+      start_time:
+        type: string
+        format: date-time
+      end_time:
+        type: string
+        format: date-time
+      description:
+        type: string
+      location:
+        type: string
+
+  GetCalendarEventsRequest:
+    type: object
+    properties:
+      start_date:
+        type: string
+        format: date
+      end_date:
+        type: string
+        format: date
+      max_results:
+        type: integer
+        default: 10
+
+  SuggestItineraryRequest:
+    type: object
+    required:
+      - destination
+      - days
+    properties:
+      destination:
+        type: string
+      days:
+        type: integer
+      interests:
+        type: array
+        items:
+          type: string
+
+  SearchFlightsRequest:
+    type: object
+    required:
+      - origin
+      - destination
+      - departure_date
+    properties:
+      origin:
+        type: string
+      destination:
+        type: string
+      departure_date:
+        type: string
+        format: date
+      return_date:
+        type: string
+        format: date
+
+  RegionalNewsRequest:
+    type: object
+    properties:
+      region:
+        type: string
+        description: Target geographic region or city (defaults to user profile location)
+      categories:
+        type: array
+        items:
+          type: string
+        default: ["local", "weather", "city_updates"]
+      max_results:
+        type: integer
+        default: 5
+
+  TechNewsRequest:
+    type: object
+    properties:
+      technologies:
+        type: array
+        items:
+          type: string
+        default: ["AI/ML", "Cloud Computing", "Software Engineering"]
+      timeframe:
+        type: string
+        default: "last_24_hours"
+      max_results:
+        type: integer
+        default: 5
+
+  NewsRequest:
+    type: object
+    required:
+      - category
+    properties:
+      category:
+        type: string
+        default: general
+      topic_keywords:
+        type: array
+        items:
+          type: string
+
+  EmailSummaryRequest:
+    type: object
+    required:
+      - thread_id
+    properties:
+      thread_id:
+        type: string
+      max_results:
+        type: integer
+        default: 5
+
+  DraftReplyRequest:
+    type: object
+    required:
+      - thread_id
+      - instructions
+    properties:
+      thread_id:
+        type: string
+      instructions:
+        type: string
+
+  StockPriceRequest:
+    type: object
+    required:
+      - ticker
+    properties:
+      ticker:
+        type: string
+
+  ExtractReceiptRequest:
+    type: object
+    required:
+      - text_content
+    properties:
+      text_content:
+        type: string
+      source:
+        type: string
+        enum: [email, sms, manual]
+
+  LogWorkoutRequest:
+    type: object
+    required:
+      - activity_type
+      - duration_minutes
+    properties:
+      activity_type:
+        type: string
+      duration_minutes:
+        type: integer
+      calories_burned:
+        type: integer
+
+  GroceryItemRequest:
+    type: object
+    required:
+      - item_name
+      - action
+    properties:
+      item_name:
+        type: string
+      action:
+        type: string
+        enum: [add, remove, check]
+      quantity:
+        type: integer
+        default: 1
+
+  SearchDriveRequest:
+    type: object
+    required:
+      - query
+    properties:
+      query:
+        type: string
+      file_type:
+        type: string

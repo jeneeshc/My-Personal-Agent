@@ -1,0 +1,147 @@
+openapi: 3.1.0
+info:
+  title: WhatsApp Webhook API Contract
+  description: OpenAPI contract for Meta WhatsApp Cloud API Webhook Integration
+  version: 1.0.0
+paths:
+  /webhook/whatsapp:
+    get:
+      summary: Verify Webhook URL
+      description: Verification endpoint invoked by Meta to validate webhook ownership.
+      parameters:
+        - name: hub.mode
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [subscribe]
+        - name: hub.challenge
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: hub.verify_token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Verification succeeded. Returns hub.challenge as plain integer/string.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Verification failed token validation.
+    post:
+      summary: Receive Inbound WhatsApp Event
+      description: Receives incoming message events, status updates, and user interactions from WhatsApp.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WhatsAppWebhookPayload'
+      responses:
+        '200':
+          description: Payload received and queued successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success, ignored]
+components:
+  schemas:
+    WhatsAppWebhookPayload:
+      type: object
+      required:
+        - object
+        - entry
+      properties:
+        object:
+          type: string
+          example: whatsapp_business_account
+        entry:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEntry'
+    WebhookEntry:
+      type: object
+      required:
+        - id
+        - changes
+      properties:
+        id:
+          type: string
+        changes:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookChange'
+    WebhookChange:
+      type: object
+      required:
+        - field
+        - value
+      properties:
+        field:
+          type: string
+          example: messages
+        value:
+          $ref: '#/components/schemas/WebhookValue'
+    WebhookValue:
+      type: object
+      properties:
+        messaging_product:
+          type: string
+          example: whatsapp
+        metadata:
+          type: object
+          properties:
+            display_phone_number:
+              type: string
+            phone_number_id:
+              type: string
+        contacts:
+          type: array
+          items:
+            type: object
+            properties:
+              profile:
+                type: object
+                properties:
+                  name:
+                    type: string
+              wa_id:
+                type: string
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/InboundMessage'
+    InboundMessage:
+      type: object
+      required:
+        - from
+        - id
+        - timestamp
+        - type
+      properties:
+        from:
+          type: string
+          description: Phone number of the sender
+        id:
+          type: string
+          description: Unique WhatsApp message ID
+        timestamp:
+          type: string
+        type:
+          type: string
+          enum: [text, image, document, audio, location, button]
+        text:
+          type: object
+          properties:
+            body:
+              type: string

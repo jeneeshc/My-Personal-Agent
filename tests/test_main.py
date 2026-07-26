@@ -6,4 +6,7 @@ client = TestClient(app)
 def test_read_root():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok", "message": "Personal Assistant API is running"}
+    data = response.json()
+    assert data["status"] == "ok"
+    assert data["message"] == "Personal Assistant API is running"
+    assert "configured_user" in data

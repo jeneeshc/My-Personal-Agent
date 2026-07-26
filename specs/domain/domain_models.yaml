@@ -1,0 +1,89 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+title: DomainModelsContract
+description: Contract specification for core domain entities in Firestore / persistent storage.
+type: object
+definitions:
+  UserProfile:
+    type: object
+    required:
+      - user_id
+      - phone_number
+      - created_at
+    properties:
+      user_id:
+        type: string
+        description: Primary user identifier (e.g. WhatsApp WA_ID)
+      phone_number:
+        type: string
+      full_name:
+        type: string
+      email:
+        type: string
+        format: email
+      is_authenticated:
+        type: boolean
+        default: false
+      google_oauth_ref:
+        type: string
+        description: Firestore document key referencing encrypted OAuth tokens
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+
+  ScheduledTaskConfig:
+    type: object
+    required:
+      - task_id
+      - user_id
+      - task_type
+      - cron_expression
+      - is_active
+    properties:
+      task_id:
+        type: string
+      user_id:
+        type: string
+      task_type:
+        type: string
+        enum: [daily_email_summary, weekly_news_summary, stock_update, health_checkin]
+      cron_expression:
+        type: string
+        example: "0 8 * * *"
+      is_active:
+        type: boolean
+        default: true
+      last_run_at:
+        type: string
+        format: date-time
+
+  ExpenseRecord:
+    type: object
+    required:
+      - record_id
+      - user_id
+      - merchant
+      - amount
+      - currency
+      - date
+    properties:
+      record_id:
+        type: string
+      user_id:
+        type: string
+      merchant:
+        type: string
+      amount:
+        type: number
+      currency:
+        type: string
+        default: USD
+      category:
+        type: string
+      date:
+        type: string
+        format: date-time
+      source_raw_text:
+        type: string

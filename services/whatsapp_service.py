@@ -1,5 +1,9 @@
+"""
+WhatsApp Service Implementation for outbound API message dispatching
+"""
 import os
 import httpx
+from typing import Optional
 
 class WhatsAppService:
     def __init__(self):
@@ -9,7 +13,7 @@ class WhatsAppService:
         
     async def send_message(self, recipient_id: str, text: str) -> bool:
         """
-        Send a text message back to the user via WhatsApp API.
+        Send text message back to WhatsApp user via Graph API.
         """
         url = f"{self.api_url}{self.phone_number_id}/messages"
         headers = {
@@ -22,11 +26,17 @@ class WhatsAppService:
             "type": "text",
             "text": {"body": text}
         }
-        
-        # In a real scenario, uncomment the HTTP call:
-        # async with httpx.AsyncClient() as client:
-        #     response = await client.post(url, headers=headers, json=payload)
-        #     return response.status_code == 200
-        
-        print(f"[Mock] Sent message to {recipient_id}: {text}")
+
+        if self.access_token != "test_token":
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(url, headers=headers, json=payload, timeout=10.0)
+                    if response.status_code != 200:
+                        print(f"[WhatsApp API Error]: HTTP {response.status_code} - {response.text}")
+                    return response.status_code == 200
+            except Exception as e:
+                print(f"[WhatsApp API Error]: {e}")
+                return False
+
+        print(f"[WhatsApp Mock Dispatch] To {recipient_id}: {text}")
         return True
