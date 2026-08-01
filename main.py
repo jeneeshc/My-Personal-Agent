@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from fastapi import FastAPI
-from api import whatsapp
+from api import whatsapp, cron
 
 # Ensure stdout and stderr use UTF-8 on Windows
 if sys.platform == "win32":
@@ -20,6 +20,7 @@ app = FastAPI(
 )
 
 app.include_router(whatsapp.router)
+app.include_router(cron.router)
 
 @app.get("/")
 def read_root():

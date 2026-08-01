@@ -152,6 +152,8 @@ definitions:
       source:
         type: string
         enum: [email, sms, manual]
+      reference_id:
+        type: string
 
   LogWorkoutRequest:
     type: object
@@ -190,3 +192,125 @@ definitions:
         type: string
       file_type:
         type: string
+
+  FetchUnreadEmailsRequest:
+    type: object
+    properties:
+      max_results:
+        type: integer
+        default: 5
+      query_filter:
+        type: string
+
+  GetCompanyNewsRequest:
+    type: object
+    required:
+      - company_or_ticker
+    properties:
+      company_or_ticker:
+        type: string
+      max_results:
+        type: integer
+        default: 5
+
+  CalculateSpendingRequest:
+    type: object
+    properties:
+      category:
+        type: string
+      days:
+        type: integer
+        default: 30
+
+  ListSubscriptionsRequest:
+    type: object
+    properties:
+      active_only:
+        type: boolean
+        default: true
+
+  GetTopNewsRequest:
+    type: object
+    properties:
+      category:
+        type: string
+        default: "general"
+      max_results:
+        type: integer
+        default: 5
+
+  SearchTopicRequest:
+    type: object
+    required:
+      - topic
+    properties:
+      topic:
+        type: string
+      max_results:
+        type: integer
+        default: 5
+
+  GetWeatherRequest:
+    type: object
+    properties:
+      location:
+        type: string
+
+  SuggestMealPlanRequest:
+    type: object
+    properties:
+      dietary_preference:
+        type: string
+        default: "balanced"
+      days:
+        type: integer
+        default: 1
+
+  CheckProductPriceRequest:
+    type: object
+    required:
+      - product_name
+    properties:
+      product_name:
+        type: string
+      store:
+        type: string
+
+  SummarizeDocumentRequest:
+    type: object
+    required:
+      - file_id
+    properties:
+      file_id:
+        type: string
+      file_name:
+        type: string
+
+  TodaysNewsRequest:
+    type: object
+    properties:
+      importance_threshold:
+        type: string
+        enum: ["high", "medium", "all"]
+        default: "medium"
+      include_local_malayalam:
+        type: boolean
+        default: true
+      include_regional_india:
+        type: boolean
+        default: true
+      include_global:
+        type: boolean
+        default: true
+      include_tech_ai:
+        type: boolean
+        default: true
+
+  FinancialInsightsRequest:
+    type: object
+    properties:
+      financial_year:
+        type: string
+        example: "2026-2027"
+
+

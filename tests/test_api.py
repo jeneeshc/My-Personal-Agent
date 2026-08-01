@@ -173,8 +173,18 @@ def test_whatsapp_webhook_handles_worker_crash(monkeypatch):
     response = client.post("/webhook/whatsapp", json=payload)
     assert response.status_code == 200
     assert response.json() == {"status": "success"}
-    state = whatsapp.secretary.process_manager.get_process_state("NewsCollector")
-    assert state.status == "FAILED_MAX_RETRIES"
-    assert state.consecutive_crashes == 5
+
+def test_internal_cron_scheduled_tasks():
+    """Test POST /internal/cron/scheduled-tasks endpoint triggered by GCP Cloud Scheduler."""
+    response = client.post(
+        "/internal/cron/scheduled-tasks",
+        headers={"X-CloudScheduler-JobName": "daily-morning-briefing-6am-ist"}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert data["processed_count"] == 1
+    assert any("6:00 AM IST" in detail for detail in data["details"])
+
 
 

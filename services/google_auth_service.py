@@ -5,10 +5,13 @@ import os
 import imaplib
 from typing import Dict, Any
 
+from dotenv import load_dotenv
+
 class GoogleAuthService:
     def __init__(self):
-        self.email = os.environ.get("GOOGLE_USER_EMAIL", "")
-        self.password = os.environ.get("GOOGLE_USER_PASSWORD", "")
+        load_dotenv()
+        self.email = os.environ.get("GOOGLE_USER_EMAIL", "").strip()
+        self.password = os.environ.get("GOOGLE_USER_PASSWORD", "").strip()
 
     def test_connection(self) -> Dict[str, Any]:
         """

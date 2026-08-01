@@ -22,9 +22,18 @@ from models.agent_schemas import (
     LogWorkoutRequest,
     GroceryItemRequest,
     SearchDriveRequest,
+    FetchUnreadEmailsRequest,
+    GetCompanyNewsRequest,
+    CalculateSpendingRequest,
+    ListSubscriptionsRequest,
+    GetTopNewsRequest,
+    SearchTopicRequest,
+    GetWeatherRequest,
+    SuggestMealPlanRequest,
+    CheckProductPriceRequest,
+    SummarizeDocumentRequest,
     AgentProcessState
 )
-
 
 client = TestClient(app)
 
@@ -134,4 +143,39 @@ def test_agent_process_state_contract():
     assert state.consecutive_crashes == 0
     assert state.max_consecutive_crashes == 5
 
+def test_new_worker_tool_schemas():
+    """Test newly added worker tool schema models."""
+    email_req = FetchUnreadEmailsRequest(max_results=10)
+    assert email_req.max_results == 10
+
+    stock_news = GetCompanyNewsRequest(company_or_ticker="GOOGL")
+    assert stock_news.company_or_ticker == "GOOGL"
+
+    spending = CalculateSpendingRequest(days=15)
+    assert spending.days == 15
+
+    subs = ListSubscriptionsRequest(active_only=True)
+    assert subs.active_only is True
+
+    meal = SuggestMealPlanRequest(dietary_preference="vegan", days=3)
+    assert meal.dietary_preference == "vegan"
+
+    doc_sum = SummarizeDocumentRequest(file_id="doc_999", file_name="Report.pdf")
+    assert doc_sum.file_id == "doc_999"
+
+def test_todays_news_request_model():
+    """Test TodaysNewsRequest and NewsHeadlineItem models."""
+    from models.agent_schemas import TodaysNewsRequest, NewsHeadlineItem
+    req = TodaysNewsRequest(importance_threshold="high", include_local_malayalam=True)
+    assert req.importance_threshold == "high"
+    assert req.include_local_malayalam is True
+
+    item = NewsHeadlineItem(
+        title="Test Title",
+        category="Local Malayalam (Kerala)",
+        source="Malayala Manorama",
+        summary="Test summary",
+        importance_score=0.95
+    )
+    assert item.importance_score == 0.95
 

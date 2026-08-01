@@ -27,6 +27,7 @@ class IntentClassification(BaseModel):
         "health_wellness",
         "shopping",
         "document_drive",
+        "capabilities_greeting",
         "general_conversation"
     ]
     target_agent: Literal[
@@ -87,7 +88,7 @@ class UserProfile(BaseModel):
 class ScheduledTaskConfig(BaseModel):
     task_id: str
     user_id: str
-    task_type: Literal["daily_email_summary", "weekly_news_summary", "stock_update", "health_checkin"]
+    task_type: Literal["daily_morning_digest", "daily_email_summary", "weekly_news_summary", "stock_update", "health_checkin"]
     cron_expression: str
     is_active: bool = True
     last_run_at: Optional[str] = None
@@ -99,9 +100,13 @@ class ExpenseRecord(BaseModel):
     amount: float
     currency: str = "USD"
     category: Optional[str] = None
+    transaction_type: Literal["debit", "credit"] = "debit"
+    account_balance: Optional[float] = None
+    financial_year: Optional[str] = None
     date: str
     source_raw_text: Optional[str] = None
-
+    reference_id: Optional[str] = None
+    dedup_hash: Optional[str] = None
 
 # ==========================================
 # 3. Worker Agent Tool Request Models
@@ -158,6 +163,7 @@ class StockPriceRequest(BaseModel):
 class ExtractReceiptRequest(BaseModel):
     text_content: str = Field(..., description="Raw text of SMS or email")
     source: Literal["email", "sms", "manual"] = "email"
+    reference_id: Optional[str] = None
 
 class LogWorkoutRequest(BaseModel):
     activity_type: str
@@ -172,3 +178,72 @@ class GroceryItemRequest(BaseModel):
 class SearchDriveRequest(BaseModel):
     query: str
     file_type: Optional[str] = None
+
+class FetchUnreadEmailsRequest(BaseModel):
+    max_results: int = 5
+    query_filter: Optional[str] = None
+
+class GetCompanyNewsRequest(BaseModel):
+    company_or_ticker: str
+    max_results: int = 5
+
+class CalculateSpendingRequest(BaseModel):
+    category: Optional[str] = None
+    days: int = 30
+
+class ListSubscriptionsRequest(BaseModel):
+    active_only: bool = True
+
+class GetTopNewsRequest(BaseModel):
+    category: str = "general"
+    max_results: int = 5
+
+class SearchTopicRequest(BaseModel):
+    topic: str
+    max_results: int = 5
+
+class GetWeatherRequest(BaseModel):
+    location: Optional[str] = None
+
+class SuggestMealPlanRequest(BaseModel):
+    dietary_preference: str = "balanced"
+    days: int = 1
+
+class CheckProductPriceRequest(BaseModel):
+    product_name: str
+    store: Optional[str] = None
+
+class SummarizeDocumentRequest(BaseModel):
+    file_id: str
+    file_name: Optional[str] = None
+
+class TodaysNewsRequest(BaseModel):
+    importance_threshold: Literal["high", "medium", "all"] = "medium"
+    include_local_malayalam: bool = True
+    include_regional_india: bool = True
+    include_global: bool = True
+    include_tech_ai: bool = True
+
+class NewsHeadlineItem(BaseModel):
+    title: str
+    category: Literal["Local Malayalam (Kerala)", "Regional Indian", "Global Headlines", "Tech, AI & Data Science"]
+    source: str
+    summary: str
+    importance_score: float = Field(..., ge=0.0, le=1.0)
+
+class FinancialInsightsRequest(BaseModel):
+    financial_year: Optional[str] = "2026-2027"
+
+class FinancialInsightsResponse(BaseModel):
+    financial_year: str
+    total_income: float
+    total_expense: float
+    net_savings: float
+    current_balance: float
+    top_spend_category: str
+    top_spend_amount: float
+    cost_reduction_tips: List[str]
+
+
+
+
